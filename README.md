@@ -7,10 +7,11 @@
 rollup
 rollup-plugin-css-only
 rollup-plugin-svelte
+@sveltejs/adapter-static
 
 ## Running
 
-### in Dev
+### in dev
 
 ```
 npm run dev
@@ -21,13 +22,23 @@ COMPONENT_PATH=CustomComponent npx rollup --config rollup.config.custom-componen
 cp public/build/custom/CustomComponent.js src/customComponents
 ```
 
-### in Preview
+### in preview
 
 ```
 COMPONENT_PATH=CustomComponent npx rollup --config rollup.config.custom-component.js
 mkdir -p .svelte-kit/output/client/_app/immutable/customComponents
 cp public/build/custom/CustomComponent.js .svelte-kit/output/client/_app/immutable/customComponents
 npm preview
+```
+
+### serving build
+
+```
+npm run build
+COMPONENT_PATH=CustomComponent npx rollup --config rollup.config.custom-component.js
+mkdir -p build/_app/immutable/customComponents
+cp public/build/custom/CustomComponent.js build/_app/immutable/customComponents
+(cd build && npx http-server)
 ```
 
 ## src/customComponents
