@@ -10,14 +10,25 @@ rollup-plugin-svelte
 
 ## Running
 
-Currently:
+### in Dev
+
+```
+npm run dev
+```
 
 ```
 COMPONENT_PATH=CustomComponent npx rollup --config rollup.config.custom-component.js
 cp public/build/custom/CustomComponent.js src/customComponents
 ```
 
-WIP: still need to push to the server to test
+### in Preview
+
+```
+COMPONENT_PATH=CustomComponent npx rollup --config rollup.config.custom-component.js
+mkdir -p .svelte-kit/output/client/_app/immutable/customComponents
+cp public/build/custom/CustomComponent.js .svelte-kit/output/client/_app/immutable/customComponents
+npm preview
+```
 
 ## src/customComponents
 

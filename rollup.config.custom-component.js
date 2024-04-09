@@ -16,7 +16,7 @@ const emitCss = false
 
 export default {
   // our widget as input
-  external: ['svelte', 'svelte/internal', './src/*'],
+  external: ['./src/*'],
   input: `custom/${componentPath}.svelte`,
 
   output: {
@@ -35,7 +35,8 @@ export default {
     emitCss && css({ output: `${componentPath}.css` }),
 
     resolve({
-      browser: true
+      browser: true,
+      dedupe: ['svelte', 'svelte/internal'],
     }),
     commonjs(),
     terser(),
