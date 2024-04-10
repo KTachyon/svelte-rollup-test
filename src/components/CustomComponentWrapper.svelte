@@ -1,16 +1,18 @@
-<script lang="js">
-  import { onDestroy } from 'svelte'
+<script lang="ts">
+  import { onDestroy, type ComponentType, SvelteComponent } from 'svelte'
+  import type { CoreInterface } from '../core/coreInterface'
 
-  let component
+  let component: ComponentType
   export { component as this }
+  export let core: CoreInterface;
 
-  let target
-  let cmp
+  let target: HTMLDivElement
+  let cmp: SvelteComponent | null = null
 
   const create = () => {
     cmp = new component({
       target,
-      props: $$restProps,
+      props: { ...$$restProps, core },
     })
   }
 
@@ -26,7 +28,7 @@
   }
 
   $: if (cmp) {
-    cmp.$set($$restProps)
+    cmp.$set({ ...$$restProps, core })
   }
 
   onDestroy(cleanup)
