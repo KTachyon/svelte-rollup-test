@@ -22,6 +22,7 @@
 
   const renderDefaultComponent = () => component = DefaultComponent;
   const renderCustomComponent = async () => component = await loadComponent('CustomComponent');
+  const renderCustomComponentTwo = async () => component = await loadComponent('CustomComponentTwo');
 
   setInterval(() => {
     $store.value = makeid();
@@ -30,6 +31,7 @@
 
 <button on:click={renderDefaultComponent}>Render default component</button>
 <button on:click={renderCustomComponent}>Render custom component</button>
+<button on:click={renderCustomComponentTwo}>Render custom component two</button>
 
 {#if component}
   <CustomComponentWrapper this={component} name={"xxx"} {core} />

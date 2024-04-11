@@ -10,8 +10,8 @@
   $: store = getStore();
 </script>
 
-<div>This is the custom component</div>
+<div>This is the custom two component</div>
 <div>name is {name}</div>
 <div>core value is {$store.value}</div>
 
-<Counter --color-theme-1="#ff0000" --color-bg-1="#00f0f0" />
+<Counter --color-theme-1="#ff00ff" --color-bg-1="#f0f0f0" />
