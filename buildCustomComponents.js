@@ -6,8 +6,9 @@ import resolve from '@rollup/plugin-node-resolve'
 // import css from 'rollup-plugin-css-only'
 import terser from '@rollup/plugin-terser'
 import fs from 'fs';
+import { v4 } from 'uuid';
 
-const build = async (componentPath) => {
+const build = async (componentPath, identifier) => {
   const bundle = await rollup({
     input: `custom/${componentPath}.svelte`,
     plugins: [
@@ -27,54 +28,58 @@ const build = async (componentPath) => {
 
   await bundle.write({
     format: 'es',
-    file: `public/build/custom/${componentPath}.js`,
+    file: `public/build/custom/${componentPath}-${identifier}.js`,
     sourcemap: true,
   });
 
   await bundle.close();
 }
 
-const processCustomComponents = async () => {
+const processCustomComponents = async (identifier) => {
   const customComponents = fs.readdirSync('custom')
     .filter((file) => file.endsWith('.svelte'))
     .map((file) => file.split('.')[0]);
 
+  let destinationPath = '';
+
+  switch (process.env.MODE) {
+    case 'dev':
+      destinationPath = 'src/customComponents/';
+      break;
+    case 'preview':
+      destinationPath = '.svelte-kit/output/client/_app/immutable/customComponents/';
+      break;
+    case 'build':
+      destinationPath = 'build/_app/immutable/customComponents/';
+      break;
+  }
+
   for (const componentPath of customComponents) {
-    await build(componentPath);
+    await build(componentPath, identifier);
+
+    const pathIdentifier = `${componentPath}-${identifier}`;
     
     let files = [
-      `public/build/custom/${componentPath}.js`,
-      `public/build/custom/${componentPath}.js.map`
+      `public/build/custom/${pathIdentifier}.js`,
+      `public/build/custom/${pathIdentifier}.js.map`
     ];
-    let destinationPath = []
-
-    switch (process.env.MODE) {
-      case 'dev':
-        destinationPath = [
-          `src/customComponents/${componentPath}.js`,
-          `src/customComponents/${componentPath}.js.map`
-        ];
-        break;
-      case 'preview':
-        destinationPath = [
-          `.svelte-kit/output/client/_app/immutable/customComponents/${componentPath}.js`,
-          `.svelte-kit/output/client/_app/immutable/customComponents/${componentPath}.js.map`
-        ];
-        break;
-      case 'build':
-        destinationPath = [
-          `build/_app/immutable/customComponents/${componentPath}.js`,
-          `build/_app/immutable/customComponents/${componentPath}.js.map`
-        ];
-        break;
-    }
 
     for (let i = 0; i < files.length; i++) {
-      fs.copyFileSync(files[i], destinationPath[i]);
+      fs.copyFileSync(files[i], `${destinationPath}${files[i].split('/').pop()}`);
     }
   }
+
+  fs.writeFileSync(
+    `${destinationPath}map.json`,
+    JSON.stringify(
+      customComponents.reduce((acc, component) => {
+        acc[component] = `${component}-${identifier}`;
+        return acc;
+      }, {})
+    )
+  );
 }
 
-processCustomComponents().then(() => {
+processCustomComponents(v4()).then(() => {
   console.log('Custom components processed');
 });
