@@ -35,24 +35,25 @@ const build = async (componentPath, identifier) => {
   await bundle.close();
 }
 
+const cleanup = (path) => {
+  fs.readdirSync(path)
+    .filter((file) => file.endsWith('.js') || file.endsWith('.js.map'))
+    .forEach((file) => fs.unlinkSync(`${path}${file}`));
+}
+
 const processCustomComponents = async (identifier) => {
   const customComponents = fs.readdirSync('custom')
     .filter((file) => file.endsWith('.svelte'))
     .map((file) => file.split('.')[0]);
 
-  let destinationPath = '';
+  let destinationPath = {
+    dev: 'src/customComponents/',
+    preview: '.svelte-kit/output/client/_app/immutable/customComponents/',
+    build: 'build/_app/immutable/customComponents/',
+  }[process.env.MODE];
 
-  switch (process.env.MODE) {
-    case 'dev':
-      destinationPath = 'src/customComponents/';
-      break;
-    case 'preview':
-      destinationPath = '.svelte-kit/output/client/_app/immutable/customComponents/';
-      break;
-    case 'build':
-      destinationPath = 'build/_app/immutable/customComponents/';
-      break;
-  }
+  cleanup(destinationPath);
+  cleanup('public/build/custom/');
 
   for (const componentPath of customComponents) {
     await build(componentPath, identifier);
