@@ -10,7 +10,8 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"test": "vitest",
-		"lint": "eslint ."
+		"lint": "eslint .",
+		"custom-build-dev": "MODE=dev node buildCustomComponents.js"
 	},
 	"devDependencies": {
 		"@rollup/plugin-commonjs": "^25.0.7",
